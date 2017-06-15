@@ -12,22 +12,18 @@ import javafx.scene.shape.Shape;
 import java.util.Iterator;
 
 import javafx.scene.shape.Line;
-import javafx.scene.paint.*;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import javafx.scene.control.Label;
-/**
- * Write a description of class Game here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
-public class Game extends Application
 
+public class Game extends Application
 {
     // se da el maño a la pnatalal de juego.
     private static final int ANCHO_ESCENA = 500;
     private static final int ALTO_ESCENA = 500;
+    //CAbecera
+    private int puntuacion;
 
     // Parameros para los bloques
     public ArrayList<BloqueCobertura> ladrillos;
@@ -52,6 +48,12 @@ public class Game extends Application
         // se crea la escena y el contenedor .
         Group g = new Group();
         Scene escena = new Scene(g, ANCHO_ESCENA,ALTO_ESCENA);
+        //creo cabecera
+        Label mensajePuntos = new Label("PUNTOS : 0");
+        mensajePuntos.setTranslateX(10);
+        mensajePuntos.setTranslateY(30);
+        g.getChildren().add(mensajePuntos);
+
 
         //se crea la nave del jugador
         Nave player= new Nave(ANCHO_ESCENA); 
@@ -118,8 +120,8 @@ public class Game extends Application
         //lineaDisparo1.setVisible(false);
         Line lineaDisparo1=new Line(0,70,ANCHO_ESCENA,70); 
         lineaDisparo1.setStroke(Color.GREEN);
-
         g.getChildren().add(lineaDisparo1); 
+
         Line lineaDisparo2=new Line(0,470,ANCHO_ESCENA,470); 
         lineaDisparo2.setStroke(Color.GREEN);
         g.getChildren().add(lineaDisparo2); 
@@ -180,7 +182,9 @@ public class Game extends Application
                                 posibleAliem.setVisible(false);
                                 disparoAliado.setVisible(false);
                                 iteradorAliem.remove();
-                                iteradorBala.remove(); 
+                                iteradorBala.remove();
+                                puntuacion=puntuacion+posibleAliem.getPuntos();
+                                mensajePuntos.setText("PUNTOS : " + String.valueOf(puntuacion));
                             }                           
                         }
                         //Disparo JUgador COntra el Bloque
@@ -200,8 +204,13 @@ public class Game extends Application
                         }
                     }
 
-                    
-
+                    if (puntuacion==3100){
+                        Label mensajeWin = new Label("YOU WIN");
+                        mensajeWin.setTranslateX(escena.getWidth() / 2);
+                        mensajeWin.setTranslateY(escena.getHeight() / 2);
+                        g.getChildren().add(mensajeWin);
+                        timeline.stop();
+                    }
                 });
         disparoPlayer = new ArrayList<>();
         escena.setOnKeyPressed(event -> {
@@ -232,5 +241,4 @@ public class Game extends Application
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();     
     }
-
 }

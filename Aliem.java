@@ -1,15 +1,10 @@
 import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
-/**
- * Abstract class Aliem - write a description of the class here
- * 
- * @author: 
- * Date: 
- */
 public abstract class Aliem extends Circle
 {
     private int velocidadEnX;
     private int velocidadEnY; 
+    protected int puntos;
     
     public Aliem (){
         velocidadEnX = 1;
@@ -29,5 +24,8 @@ public abstract class Aliem extends Circle
     }
     public  void disparar(){
         D_Aliem a = new D_Aliem((int)getCenterX(),(int)getCenterY());
+    }
+    public int getPuntos(){
+        return puntos;
     }
 }

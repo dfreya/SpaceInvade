@@ -14,5 +14,7 @@ public class A_Morado extends Aliem
         setRadius(16);
         setCenterX(valorX);
         setCenterY(110);
+        puntos=160;
     }
+
 }

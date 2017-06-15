@@ -3,6 +3,9 @@ import javafx.stage.Stage;
 
 import javafx.scene.Scene;
 import javafx.scene.Group;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+
 import javafx.scene.input.KeyCode;
 import javafx.animation.Animation.Status;
 
@@ -24,6 +27,10 @@ public class Game extends Application
     // se da el maño a la pnatalal de juego.
     private static final int ANCHO_ESCENA = 500;
     private static final int ALTO_ESCENA = 500;
+    private ImageView visorFondo;
+    private Image imagenFondo;
+
+    
     //CAbecera
     private int puntuacion;
 
@@ -38,7 +45,7 @@ public class Game extends Application
     private static final int DISTANCIA_ALIEMS_X = 45;
     private ArrayList<D_Aliem> disparoAliem;
     private int contFramesParaDisparo;
-
+    
     //para la nave
     private ArrayList<D_Nave> disparoPlayer;
     
@@ -50,9 +57,16 @@ public class Game extends Application
     @Override
     public void start(Stage escenario)
     {
+        
+        
         // se crea la escena y el contenedor .
         Group g = new Group();
         Scene escena = new Scene(g, ANCHO_ESCENA,ALTO_ESCENA);
+        
+        imagenFondo=new Image("Imagenes/fondo.jpg");
+        visorFondo=new ImageView(imagenFondo);
+        g.getChildren().add(visorFondo);
+        
         //creo cabecera
         Label mensajePuntos = new Label("PUNTOS : 0");
         mensajePuntos.setTranslateX(10);
@@ -336,6 +350,7 @@ public class Game extends Application
         escenario.setScene(escena);
         escenario.show();
         timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();     
+        timeline.play();  
+        
     }
 }

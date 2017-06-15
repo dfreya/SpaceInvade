@@ -1,12 +1,6 @@
 import javafx.scene.shape.Rectangle;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
-/**
- * Write a description of class Nave here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class Nave extends Rectangle
 {
     private static final int ANCHO_NAVE = 30;

@@ -1,10 +1,12 @@
 import javafx.scene.shape.Circle;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 public abstract class Aliem extends Circle
 {
     private int velocidadEnX;
     private int velocidadEnY; 
     protected int puntos;
+    protected Image imagenAliem;
     
     public Aliem (){
         velocidadEnX = 1;

@@ -1,5 +1,6 @@
 import javafx.scene.paint.Color;
-
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
 public class A_Verde extends Aliem
 {
     
@@ -10,6 +11,8 @@ public class A_Verde extends Aliem
         setCenterX(valorX);
         setCenterY(180);
         puntos=40;
+        imagenAliem=new Image("Imagenes/aliem4.png");
+        setFill( new ImagePattern(imagenAliem));
     }
 
 }

@@ -4,6 +4,7 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
+import javafx.animation.Animation.Status;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -16,6 +17,7 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import javafx.scene.control.Label;
+import java.util.Random;
 
 public class Game extends Application
 {
@@ -34,9 +36,12 @@ public class Game extends Application
     private ArrayList<Aliem> lineasAliem;
     private static final int NUMERO_ALIEMS = 10;
     private static final int DISTANCIA_ALIEMS_X = 45;
+    private ArrayList<D_Aliem> disparoAliem;
+    private int contFramesParaDisparo;
 
     //para la nave
     private ArrayList<D_Nave> disparoPlayer;
+    
 
     public static void main(String[] args){
         launch(args);
@@ -53,11 +58,16 @@ public class Game extends Application
         mensajePuntos.setTranslateX(10);
         mensajePuntos.setTranslateY(30);
         g.getChildren().add(mensajePuntos);
-
+        
+        Label mensajeVida = new Label("VIDA : 3");
+        mensajeVida.setTranslateX(400);
+        mensajeVida.setTranslateY(30);
+        g.getChildren().add(mensajeVida);
 
         //se crea la nave del jugador
         Nave player= new Nave(ANCHO_ESCENA); 
         g.getChildren().add(player);
+        
 
         //se crean 4 coberturas
         ladrillos = new ArrayList<>();
@@ -114,7 +124,8 @@ public class Game extends Application
         // se crea la linea la cual si llegan loS aliens pierdes.
         Line lineaLost=new Line(0,370,ANCHO_ESCENA,370); 
         lineaLost.setStroke(Color.BLUE);
-        g.getChildren().add(lineaLost);     
+        g.getChildren().add(lineaLost);
+        lineaLost.setVisible(false);
 
         // se crean las lineas de fondo de pantalla, que sirven para control de disparos.
         //lineaDisparo1.setVisible(false);
@@ -122,9 +133,16 @@ public class Game extends Application
         lineaDisparo1.setStroke(Color.GREEN);
         g.getChildren().add(lineaDisparo1); 
 
-        Line lineaDisparo2=new Line(0,470,ANCHO_ESCENA,470); 
-        lineaDisparo2.setStroke(Color.GREEN);
-        g.getChildren().add(lineaDisparo2); 
+        Line lineaDisparoBot=new Line(0,470,ANCHO_ESCENA,470); 
+        lineaDisparoBot.setStroke(Color.GREEN);
+        g.getChildren().add(lineaDisparoBot);
+        lineaDisparoBot.setVisible(false);
+
+        //contador de frame
+        Random rnd =new Random();
+
+        //arraylist de disparos Aliems
+        disparoAliem = new ArrayList<>();
 
         Timeline timeline = new Timeline();
         KeyFrame keyframe = new KeyFrame(Duration.seconds(0.01), event -> {
@@ -142,30 +160,54 @@ public class Game extends Application
                         }
                     }
 
+                    //disparo Aliems
+                    if(contFramesParaDisparo==30){
+                        int aliemQueDispara=rnd.nextInt(lineasAliem.size());
+                        D_Aliem bala = lineasAliem.get(aliemQueDispara).disparar();
+                        disparoAliem.add(bala);
+                        g.getChildren().add(bala);
+                        contFramesParaDisparo=0;
+                    }
+                    contFramesParaDisparo++;
+                    //mostrar disparos Aliems
+                    for(int iDisparoAliem=0;iDisparoAliem<disparoAliem.size();iDisparoAliem++){
+                        disparoAliem.get(iDisparoAliem).moverDisparo();
+                    }
                     // desplazar nave
                     player.mover();
 
-                    //mostrar disparos
+                    //mostrar disparos jugador
                     for(int contDisparo=0;contDisparo<disparoPlayer.size();contDisparo++){
                         disparoPlayer.get(contDisparo).moverDisparo();
-
                     }
 
                     //Comprobar choques de disparos
                     //Disparo chocan contra tope de pantalla.
                     boolean choquePantallas=false;
-                    int contBala=0;
-                    while (!choquePantallas && !disparoPlayer.isEmpty() && contBala<disparoPlayer.size()){
-                        Shape choqueTop = Shape.intersect(lineaDisparo1,disparoPlayer.get(contBala));
-                        Shape choqueBott = Shape.intersect(lineaDisparo2,disparoPlayer.get(contBala));
-                        if(choqueTop.getBoundsInParent().getWidth() != -1 
-                        || choqueBott.getBoundsInParent().getWidth() != -1){
+                    int contBalaPlayer=0;
+
+                    while (!choquePantallas && !disparoPlayer.isEmpty() && contBalaPlayer<disparoPlayer.size()){
+                        Shape choqueTop = Shape.intersect(lineaDisparo1,disparoPlayer.get(contBalaPlayer));
+
+                        if(choqueTop.getBoundsInParent().getWidth() != -1)
+                        {
                             choquePantallas = true;
-                            disparoPlayer.get(contBala).setVisible(false);
-                            disparoPlayer.remove(contBala);                            
-                            contBala--;
+                            disparoPlayer.get(contBalaPlayer).setVisible(false);
+                            disparoPlayer.remove(contBalaPlayer);
+                            contBalaPlayer--;
                         }
-                        contBala++;
+                        contBalaPlayer++;
+                    }
+                    choquePantallas=false;
+                    int contBalaAliem=0;
+                    while(!choquePantallas && !disparoAliem.isEmpty() && contBalaAliem<disparoAliem.size()){
+                        Shape choqueBott = Shape.intersect(lineaDisparoBot,disparoAliem.get(contBalaAliem));
+                        if( choqueBott.getBoundsInParent().getWidth() != -1){
+                            disparoAliem.get(contBalaAliem).setVisible(false);
+                            disparoAliem.remove(contBalaAliem);
+                            contBalaPlayer--;
+                        }
+                        contBalaAliem++;
                     }
 
                     //Disparo chocan contra Aliems.
@@ -187,12 +229,12 @@ public class Game extends Application
                                 mensajePuntos.setText("PUNTOS : " + String.valueOf(puntuacion));
                             }                           
                         }
-                        //Disparo JUgador COntra el Bloque
+                        //Disparo Jugador Contra el Bloque
                         Iterator<BloqueCobertura> iteradorBloque=ladrillos.iterator();
                         while(iteradorBloque.hasNext()){
                             BloqueCobertura posibleBloque=iteradorBloque.next();
-                            Shape balaVsBloque = Shape.intersect(disparoAliado,posibleBloque);
-                            if(balaVsBloque.getBoundsInParent().getWidth() !=-1){
+                            Shape balaJugadorVsBloque = Shape.intersect(disparoAliado,posibleBloque);
+                            if(balaJugadorVsBloque.getBoundsInParent().getWidth() !=-1){
                                 disparoAliado.setVisible(false);
                                 iteradorBala.remove();
                                 posibleBloque.setVida(posibleBloque.getVida()-1);
@@ -200,6 +242,47 @@ public class Game extends Application
                                     posibleBloque.setVisible(false);
                                     iteradorBloque.remove();
                                 }
+                            }
+                            
+                            //PREGUNTAR
+                            //PREGUNTAR
+                            //PREGUNTAR
+                            //PREGUNTAR
+                            //PREGUNTAR
+                            //PREGUNTAR
+                            
+                            mensajeVida.setText("VIDA : " + String.valueOf(player.getVida()));
+                        }
+                    }
+                    ////Disparo Aliem Contra el Bloque
+                    Iterator<D_Aliem> iteradorBalaAliem=disparoAliem.iterator();
+                    while (iteradorBalaAliem.hasNext()){
+                        Disparo disparoAliem= iteradorBalaAliem.next();
+                        Iterator<BloqueCobertura> iteradorBloque=ladrillos.iterator();
+                        while(iteradorBloque.hasNext()){
+                            BloqueCobertura posibleBloque=iteradorBloque.next();
+                            Shape balaAliemVsBloque = Shape.intersect(disparoAliem,posibleBloque);
+                            if(balaAliemVsBloque.getBoundsInParent().getWidth() !=-1){
+                                disparoAliem.setVisible(false);
+                                iteradorBalaAliem.remove();
+                                posibleBloque.setVida(posibleBloque.getVida()-1);
+                                if(posibleBloque.getVida()==0){
+                                    posibleBloque.setVisible(false);
+                                    iteradorBloque.remove();
+                                }
+                            }
+                        }
+                        Shape balaAliemVsNave = Shape.intersect(disparoAliem,player);
+                        if(balaAliemVsNave.getBoundsInParent().getWidth() !=-1){
+                            player.setVida(player.getVida()-1);
+                            disparoAliem.setVisible(false);
+                            iteradorBalaAliem.remove();
+                            if(player.getVida()==0){
+                                Label mensajeGameOver = new Label("Game over");
+                                mensajeGameOver.setTranslateX(escena.getWidth() / 2);
+                                mensajeGameOver.setTranslateY(escena.getHeight() / 2);
+                                g.getChildren().add(mensajeGameOver);
+                                timeline.stop();
                             }
                         }
                     }
@@ -225,6 +308,20 @@ public class Game extends Application
                     // al disparar creo un objeto disapra que es devuelto por el metodo disparar de la nave.
                     disparoPlayer.add(bala);
                     g.getChildren().add(bala);
+                }
+                if (event.getCode() == KeyCode.P) {
+                    Label mensajePausa = new Label("PAUSE");
+                    if (timeline.getStatus()==Status.RUNNING){
+                        mensajePausa.setTranslateX(100);
+                        mensajePausa.setTranslateY(30);
+                        g.getChildren().add(mensajePausa);
+                        timeline.stop();
+                    }
+                    else{
+                        timeline.play();
+                        mensajePausa.setText("");
+                    }
+
                 }
 
             });

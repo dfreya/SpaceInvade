@@ -14,6 +14,7 @@ public class Nave extends Rectangle
     private int velocidadX;
     private Image imagenNave;
     private int limiteDeX;
+    private int vida;
     public Nave (int limiteEnX){
         setWidth(ANCHO_NAVE);
         setHeight(ALTO_NAVE);
@@ -23,6 +24,7 @@ public class Nave extends Rectangle
         imagenNave=new Image("Imagenes/nave.png");
         setFill( new ImagePattern(imagenNave));
         limiteDeX=limiteEnX;
+        vida=3;
     }
     public void moverIz() 
     {
@@ -53,4 +55,10 @@ public class Nave extends Rectangle
         return a;
     }
    
+    public int getVida(){
+        return vida;
+    }
+    public void setVida(int vidaActual){
+        vida=vidaActual;
+    }
 }

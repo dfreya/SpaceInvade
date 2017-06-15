@@ -22,8 +22,9 @@ public abstract class Aliem extends Circle
         }
 
     }
-    public  void disparar(){
+    public  D_Aliem disparar(){
         D_Aliem a = new D_Aliem((int)getCenterX(),(int)getCenterY());
+        return a;
     }
     public int getPuntos(){
         return puntos;

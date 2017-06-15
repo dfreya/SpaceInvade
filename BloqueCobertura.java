@@ -23,5 +23,8 @@ public class BloqueCobertura extends Rectangle
     public int getVida(){
         return puntosVida;
     }
+    public void setVida(int nuevaVida){
+        puntosVida=nuevaVida;
+    }
 }
 

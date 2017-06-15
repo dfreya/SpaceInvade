@@ -58,11 +58,13 @@ public class Game extends Application
         g.getChildren().add(player);
 
         //se crean 4 coberturas
+        ladrillos = new ArrayList<>();
         int posicionX=80;
         for(int cont=0;cont<NUMERO_BC;cont++){            
             BloqueCobertura bloque = new BloqueCobertura(posicionX); 
             g.getChildren().add(bloque);
             posicionX = posicionX + DISTANCIA_X;
+            ladrillos.add(bloque);
         }
 
         lineasAliem = new ArrayList<>();
@@ -189,12 +191,16 @@ public class Game extends Application
                             if(balaVsBloque.getBoundsInParent().getWidth() !=-1){
                                 disparoAliado.setVisible(false);
                                 iteradorBala.remove();
-                                posibleBloque.getVida();
+                                posibleBloque.setVida(posibleBloque.getVida()-1);
+                                if(posibleBloque.getVida()==0){
+                                    posibleBloque.setVisible(false);
+                                    iteradorBloque.remove();
+                                }
                             }
                         }
                     }
 
-                    //disparo
+                    
 
                 });
         disparoPlayer = new ArrayList<>();
